@@ -64,10 +64,13 @@ Prefer one replay chart with v5 panes for the trading day view:
 - Main overlays: strategy-relevant technical indicators, levels, bands, VWAP, moving averages, opening range, stops, targets, or model states.
 - Sub panes: strategy-specific diagnostics such as MACD histogram, volume, volatility, prediction score, position size, drawdown, or signal confidence.
 - Order markers: signal, entry, exit, stop, target, add, reduce, cancel, or rebalance markers.
+- Legend: a compact current-bar readout for OHLC, active overlays, pane values, and selected order context.
 
 Use the v5 pane API to keep the main chart and sub panes on one shared time scale, crosshair, and zoom context. Do not implement main/sub panes as separate chart instances unless the host chart library forces that design.
 
 Keep the equity curve as an independent chart instance. It should be clickable for date navigation, but it should not share the replay chart's time scale, crosshair, scroll, or zoom state. The equity curve summarizes strategy history; the replay panes inspect one trading day.
+
+Add a legend to the replay chart. The legend should update on crosshair movement and show the values a human needs for the bar under inspection: time, OHLC, key overlays, important sub-pane values, and any selected order or marker context. Keep it compact and readable; do not force users to inspect raw tooltips or raw JSON to understand the current bar.
 
 Choose indicators from the user's strategy design. Do not add generic indicators just because they are common. The point is to explain the strategy, not decorate the chart.
 
@@ -130,6 +133,7 @@ Adapt this contract to the framework and storage layer. The skill's intent is th
    - Render candlesticks in the main pane.
    - Add sub panes with the v5 pane API so the day replay shares one time scale and crosshair.
    - Add order markers and a detail panel.
+   - Add a crosshair-driven legend for OHLC, overlays, pane values, and selected order context.
    - Keep raw records secondary.
 
 4. Add navigation
@@ -187,6 +191,7 @@ The task is complete when a user can:
 - Use arrow keys to move across symbols and dates.
 - See candlesticks with strategy-relevant indicators in main/sub panes.
 - See replay main/sub panes managed by `lightweight-charts` v5 panes with shared replay time scale and crosshair.
+- Use a legend to read the current bar's OHLC, indicator values, pane values, and selected order context.
 - Click the equity curve to jump into a day replay.
 - Use the equity curve independently from the replay chart's pane synchronization.
 - Click an order or trade card to highlight its entry and exit while keeping enough chart context.
