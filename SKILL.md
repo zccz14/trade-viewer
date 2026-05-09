@@ -46,6 +46,14 @@ Implement these interactions whenever feasible:
    - Clicking a point jumps the replay chart to the corresponding date/session.
    - If the selected symbol has no trade that day, switch to a symbol that has data for that day or show the market/session context for the current symbol if available.
 
+5. Trade highlight behavior
+   - Clicking an order or trade card should highlight the corresponding entry and exit on the main chart.
+   - Use a clear visual treatment such as an entry-to-exit line, entry/exit price lines, active marker styling, or a highlighted holding interval.
+   - Do not zoom so tightly that a short trade fills the whole viewport. That creates a distorted, stretched review experience.
+   - Preserve a minimum context window around the trade, such as 60 to 120 bars, centered on the holding interval.
+   - For long holds, show the full holding interval plus buffer bars before entry and after exit.
+   - Prefer moving the viewport to the trade while preserving usable context over aggressive local zoom.
+
 ## Chart Structure
 
 Use `lightweight-charts` unless the project has a strong existing charting standard.
@@ -130,12 +138,18 @@ Adapt this contract to the framework and storage layer. The skill's intent is th
    - Click equity points to jump to the matching date/session.
    - Preserve symbol/date URL state after the jump.
 
-6. Verify behavior
+6. Add trade highlighting
+   - Make order cards or marker details clickable.
+   - Highlight the selected order's entry and exit on the main chart.
+   - Keep the viewport wide enough to show surrounding market context.
+
+7. Verify behavior
    - Load with no URL parameters: latest date appears.
    - Load with valid URL parameters: requested symbol/date appears.
    - Load with invalid URL parameters: viewer falls back predictably.
    - Keyboard shortcuts update chart and URL.
    - Equity click jumps to the expected date.
+   - Clicking a trade highlights the correct entry/exit without over-zooming.
    - Order cards explain why the strategy acted, not merely what field values were present.
 
 ## UI Style
@@ -167,5 +181,6 @@ The task is complete when a user can:
 - Use arrow keys to move across symbols and dates.
 - See candlesticks with strategy-relevant indicators in main/sub panes.
 - Click the equity curve to jump into a day replay.
+- Click an order or trade card to highlight its entry and exit while keeping enough chart context.
 - Read human-oriented order annotations explaining the strategy's reasons.
 - Expand raw records only when they need audit detail.
