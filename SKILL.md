@@ -56,14 +56,18 @@ Implement these interactions whenever feasible:
 
 ## Chart Structure
 
-Use `lightweight-charts` unless the project has a strong existing charting standard.
+Use `lightweight-charts` v5 unless the project has a strong existing charting standard.
 
-Prefer a multi-pane chart:
+Prefer one replay chart with v5 panes for the trading day view:
 
 - Main pane: candlesticks or bars.
 - Main overlays: strategy-relevant technical indicators, levels, bands, VWAP, moving averages, opening range, stops, targets, or model states.
 - Sub panes: strategy-specific diagnostics such as MACD histogram, volume, volatility, prediction score, position size, drawdown, or signal confidence.
 - Order markers: signal, entry, exit, stop, target, add, reduce, cancel, or rebalance markers.
+
+Use the v5 pane API to keep the main chart and sub panes on one shared time scale, crosshair, and zoom context. Do not implement main/sub panes as separate chart instances unless the host chart library forces that design.
+
+Keep the equity curve as an independent chart instance. It should be clickable for date navigation, but it should not share the replay chart's time scale, crosshair, scroll, or zoom state. The equity curve summarizes strategy history; the replay panes inspect one trading day.
 
 Choose indicators from the user's strategy design. Do not add generic indicators just because they are common. The point is to explain the strategy, not decorate the chart.
 
@@ -122,8 +126,9 @@ Adapt this contract to the framework and storage layer. The skill's intent is th
    - Build concise order annotations from strategy rules or model outputs.
 
 3. Build the replay chart
+   - Use `lightweight-charts` v5.
    - Render candlesticks in the main pane.
-   - Add main overlays and sub panes.
+   - Add sub panes with the v5 pane API so the day replay shares one time scale and crosshair.
    - Add order markers and a detail panel.
    - Keep raw records secondary.
 
@@ -134,9 +139,10 @@ Adapt this contract to the framework and storage layer. The skill's intent is th
    - Default to the latest date.
 
 5. Add equity navigation
-   - Render a separate equity chart.
+   - Render a separate equity chart instance.
    - Click equity points to jump to the matching date/session.
    - Preserve symbol/date URL state after the jump.
+   - Do not synchronize equity chart zoom, scroll, or crosshair with the replay chart.
 
 6. Add trade highlighting
    - Make order cards or marker details clickable.
@@ -180,7 +186,9 @@ The task is complete when a user can:
 - Share a URL that opens the same symbol/date.
 - Use arrow keys to move across symbols and dates.
 - See candlesticks with strategy-relevant indicators in main/sub panes.
+- See replay main/sub panes managed by `lightweight-charts` v5 panes with shared replay time scale and crosshair.
 - Click the equity curve to jump into a day replay.
+- Use the equity curve independently from the replay chart's pane synchronization.
 - Click an order or trade card to highlight its entry and exit while keeping enough chart context.
 - Read human-oriented order annotations explaining the strategy's reasons.
 - Expand raw records only when they need audit detail.
