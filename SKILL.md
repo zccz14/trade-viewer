@@ -48,6 +48,10 @@ Implement these interactions whenever feasible:
 
 5. Trade highlight behavior
    - Clicking an order or trade card should highlight the corresponding entry and exit on the main chart.
+   - If the selected date/session has trades, default to highlighting the first trade when no trade is specified in the URL.
+   - Add a URL parameter for the selected trade, such as `trade=1`, using the same human-facing numbering shown in the UI.
+   - Loading a URL with a valid trade parameter should restore that trade highlight.
+   - If the trade parameter is missing, invalid, or out of range, fall back predictably to the first available trade.
    - Use a clear visual treatment such as an entry-to-exit line, entry/exit price lines, active marker styling, or a highlighted holding interval.
    - Do not zoom so tightly that a short trade fills the whole viewport. That creates a distorted, stretched review experience.
    - Preserve a minimum context window around the trade, such as 60 to 120 bars, centered on the holding interval.
@@ -139,7 +143,7 @@ Adapt this contract to the framework and storage layer. The skill's intent is th
 4. Add navigation
    - Add symbol/date selectors.
    - Add keyboard shortcuts: left/right for dates, up/down for symbols.
-   - Add URL parameter read/write.
+   - Add URL parameter read/write for symbol, date/session, and selected trade.
    - Default to the latest date.
 
 5. Add equity navigation
@@ -151,6 +155,8 @@ Adapt this contract to the framework and storage layer. The skill's intent is th
 6. Add trade highlighting
    - Make order cards or marker details clickable.
    - Highlight the selected order's entry and exit on the main chart.
+   - Default to the first trade for a selected date/session.
+   - Persist selected trade state in the URL and restore it on load.
    - Keep the viewport wide enough to show surrounding market context.
 
 7. Verify behavior
@@ -187,7 +193,7 @@ Keep the viewer straightforward:
 The task is complete when a user can:
 
 - Open the viewer and see the latest available date by default.
-- Share a URL that opens the same symbol/date.
+- Share a URL that opens the same symbol/date and selected trade.
 - Use arrow keys to move across symbols and dates.
 - See candlesticks with strategy-relevant indicators in main/sub panes.
 - See replay main/sub panes managed by `lightweight-charts` v5 panes with shared replay time scale and crosshair.
@@ -195,5 +201,6 @@ The task is complete when a user can:
 - Click the equity curve to jump into a day replay.
 - Use the equity curve independently from the replay chart's pane synchronization.
 - Click an order or trade card to highlight its entry and exit while keeping enough chart context.
+- Open a date with trades and see the first trade highlighted by default when no trade URL parameter is present.
 - Read human-oriented order annotations explaining the strategy's reasons.
 - Expand raw records only when they need audit detail.
