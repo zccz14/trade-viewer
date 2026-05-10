@@ -53,10 +53,10 @@ Implement these interactions whenever feasible:
    - Loading a URL with a valid trade parameter should restore that trade highlight.
    - If the trade parameter is missing, invalid, or out of range, fall back predictably to the first available trade.
    - Use a clear visual treatment such as an entry-to-exit line, entry/exit price lines, active marker styling, or a highlighted holding interval.
-   - Do not zoom so tightly that a short trade fills the whole viewport. That creates a distorted, stretched review experience.
-   - Preserve a minimum context window around the trade, such as 60 to 120 bars, centered on the holding interval.
-   - For long holds, show the full holding interval plus buffer bars before entry and after exit.
-   - Prefer moving the viewport to the trade while preserving usable context over aggressive local zoom.
+   - Clicking a trade should not change the current zoom scale by default.
+   - If the trade entry and exit are already inside the current viewport, only apply the highlight.
+   - If the trade is outside the current viewport, pan or scroll the viewport just enough to bring the entry/exit segment into view while preserving the current viewport width.
+   - Avoid aggressive local zoom. A short trade should not fill the whole chart because that creates a distorted, stretched review experience.
 
 ## Chart Structure
 
@@ -157,7 +157,7 @@ Adapt this contract to the framework and storage layer. The skill's intent is th
    - Highlight the selected order's entry and exit on the main chart.
    - Default to the first trade for a selected date/session.
    - Persist selected trade state in the URL and restore it on load.
-   - Keep the viewport wide enough to show surrounding market context.
+   - Preserve the current zoom scale when a trade is clicked; pan only if needed to make entry and exit visible.
 
 7. Verify behavior
    - Load with no URL parameters: latest date appears.
@@ -165,7 +165,7 @@ Adapt this contract to the framework and storage layer. The skill's intent is th
    - Load with invalid URL parameters: viewer falls back predictably.
    - Keyboard shortcuts update chart and URL.
    - Equity click jumps to the expected date.
-   - Clicking a trade highlights the correct entry/exit without over-zooming.
+   - Clicking a trade highlights the correct entry/exit without changing zoom scale unless the host charting library leaves no alternative.
    - Order cards explain why the strategy acted, not merely what field values were present.
 
 ## UI Style
@@ -200,7 +200,7 @@ The task is complete when a user can:
 - Use a legend to read the current bar's OHLC, indicator values, pane values, and selected order context.
 - Click the equity curve to jump into a day replay.
 - Use the equity curve independently from the replay chart's pane synchronization.
-- Click an order or trade card to highlight its entry and exit while keeping enough chart context.
+- Click an order or trade card to highlight its entry and exit while preserving the current zoom scale and panning only when needed.
 - Open a date with trades and see the first trade highlighted by default when no trade URL parameter is present.
 - Read human-oriented order annotations explaining the strategy's reasons.
 - Expand raw records only when they need audit detail.
